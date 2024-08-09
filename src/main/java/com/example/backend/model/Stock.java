@@ -31,6 +31,10 @@ public class Stock {
 
 
     public Stock(String ticker, String name, Long price, Long high, Long low, Long vol, Exchange exchange, Timestamp timestamp) {
+
+    }
+
+    public Stock(String ticker, String name, Long price, Long high, Long low, Long vol, Exchange exchange) {
         this.ticker = ticker;
         this.name = name;
         this.price = price;
