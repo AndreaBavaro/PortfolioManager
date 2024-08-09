@@ -2,7 +2,11 @@ package com.example.backend.model;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
+
+import java.sql.Timestamp;
+import java.util.Set;
 
 @Entity
 public class Stock {
@@ -16,10 +20,17 @@ public class Stock {
     private Long low;
     private Long vol;
 
+    private Timestamp timestamp;
+
     @ManyToOne
     private Exchange exchange;
 
-    public Stock(String ticker, String name, Long price, Long high, Long low, Long vol, Exchange exchange) {
+
+    @ManyToMany(mappedBy = "allStocks")
+    Set<Account> allAccounts;
+
+
+    public Stock(String ticker, String name, Long price, Long high, Long low, Long vol, Exchange exchange, Timestamp timestamp) {
         this.ticker = ticker;
         this.name = name;
         this.price = price;
@@ -27,6 +38,7 @@ public class Stock {
         this.low = low;
         this.vol = vol;
         this.exchange = exchange;
+        this.timestamp = timestamp;
     }
 
     public Stock() {
@@ -87,5 +99,13 @@ public class Stock {
 
     public void setExchange(Exchange exchange) {
         this.exchange = exchange;
+    }
+
+    public Timestamp getTimestamp() {
+        return timestamp;
+    }
+
+    public void setTimestamp(Timestamp timestamp) {
+        this.timestamp = timestamp;
     }
 }
