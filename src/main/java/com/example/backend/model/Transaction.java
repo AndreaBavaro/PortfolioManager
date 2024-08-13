@@ -5,7 +5,8 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
-import java.time.LocalDateTime;
+
+import java.sql.Timestamp;
 
 @Getter
 @Setter
@@ -16,13 +17,18 @@ public class Transaction {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long transactionID;
+
     private String type;
     private int amount;
-    private LocalDateTime transactionTime;
+    private Timestamp transactionTime;
 
     @ManyToOne
+    @JoinColumn(name = "account_id")
     private Account account;
 
     @ManyToOne
+    @JoinColumn(name = "stock_id")
     private Stock stock;
+
+    // Additional methods can be added here if needed
 }

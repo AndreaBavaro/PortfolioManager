@@ -7,4 +7,5 @@ import org.springframework.stereotype.Service;
 public interface AccountService {
     public Iterable<Account> getAllAccounts();
     public Account viewAccount(String nameCode);
+    public double getAccountBalance(String nameCode);
 }

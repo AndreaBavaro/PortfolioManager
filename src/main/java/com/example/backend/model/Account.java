@@ -1,58 +1,51 @@
 package com.example.backend.model;
 
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.ManyToMany;
 
 @Entity
+@Getter
+@Setter
 public class Account {
     @Id
     private String nameCode;
+
     private String name;
-    private long deposit;
+    private long balance;
+    private long totalInvestments;
+    private long totalCash;
+
+    @ManyToOne
+    @JoinColumn(name = "portfolio_id")
+    private Portfolio portfolio;
+
+    @OneToMany(mappedBy = "account", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Investment> investments = new ArrayList<>();
+
+    @OneToMany(mappedBy = "account", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Transaction> transactions = new ArrayList<>();
 
     @ManyToMany
     @JoinTable(
             name = "stock_per_account",
-            joinColumns = @JoinColumn(name = "account"),
-            inverseJoinColumns = @JoinColumn(name = "stock")
+            joinColumns = @JoinColumn(name = "account_id"),
+            inverseJoinColumns = @JoinColumn(name = "stock_id")
     )
-    Set<Stock> allStocks;
+    private Set<Stock> allStocks;
 
-    public Account(String nameCode, String name, long deposit) {
+    public Account(String nameCode, String name, long balance) {
         this.nameCode = nameCode;
         this.name = name;
-        this.deposit = deposit;
+        this.balance = balance;
     }
 
     public Account() {
-
     }
 
-    public String getNameCode() {
-        return nameCode;
-    }
-
-    public void setNameCode(String nameCode) {
-        this.nameCode = nameCode;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public long getDeposit() {
-        return deposit;
-    }
-
-    public void setDeposit(long deposit) {
-        this.deposit = deposit;
-    }
+    // Additional methods can be added here if needed
 }

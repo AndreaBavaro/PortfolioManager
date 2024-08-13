@@ -20,4 +20,9 @@ public class AccountServiceImpl implements AccountService{
     public Account viewAccount(String nameCode) {
         return accountRepository.findByNameCode(nameCode);
     }
+
+    @Override
+    public double getAccountBalance(String nameCode) {
+        return accountRepository.getAccountBalance(nameCode);
+    }
 }

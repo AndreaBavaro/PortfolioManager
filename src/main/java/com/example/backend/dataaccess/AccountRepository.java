@@ -15,4 +15,7 @@ public interface AccountRepository extends JpaRepository<Account, String> {
 
     @Query("SELECT stock from stock_per_account s WHERE s.account = :nameCode")
     List<Stock> findAllStocksByAccount(@Param("nameCode") String nameCode);
+
+    @Query("SELECT balance from Accounts account WHERE s.account =:nameCode")
+    long getAccountBalance(@Param("nameCode") String nameCode);
 }
