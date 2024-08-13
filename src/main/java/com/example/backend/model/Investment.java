@@ -1,14 +1,13 @@
 package com.example.backend.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
+import org.hibernate.mapping.ToOne;
+
+import java.util.List;
 
 @Getter
 @Setter
@@ -26,9 +25,9 @@ public class Investment {
     @ManyToOne
     private Account account;
 
-    @ManyToOne
-    private Transaction transaction;
+    @OneToMany(mappedBy = "investment")
+    private List<Transaction> transactions;
 
-    @ManyToOne
+    @OneToOne
     private Stock stock;
 }
