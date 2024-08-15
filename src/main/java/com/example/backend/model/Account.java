@@ -15,9 +15,10 @@ public class Account {
     @Id
     private String nameCode;
     private String accountType;
-    private long balance;
-    private long totalInvestments;
-    private long totalCash;
+    private float balance;            // Changed from long to float
+    private float totalInvestments;   // Changed from long to float
+    private float totalCash;
+    private Iterable<Stock> watchList;
 
     @ManyToOne
     @JoinColumn(name = "portfolio_id")
@@ -37,13 +38,20 @@ public class Account {
     )
     private Set<Stock> allStocks;
 
-    public Account(String nameCode, String accountType, long balance) {
+    public Account(String nameCode, String accountType, float balance) {  // Updated parameter type
         this.nameCode = nameCode;
         this.accountType = accountType;
         this.balance = balance;
+        this.totalCash = balance; // Assuming initial balance is all cash
+        this.totalInvestments = 0f;
     }
 
     public Account() {
     }
-
+    public void withdraw(float amount){
+        this.balance -= amount;
+    }
+    public void deposit(float amount){
+        this.balance += amount;
+    }
 }
