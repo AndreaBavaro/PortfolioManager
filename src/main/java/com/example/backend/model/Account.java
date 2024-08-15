@@ -14,8 +14,7 @@ import java.util.Set;
 public class Account {
     @Id
     private String nameCode;
-
-    private String name;
+    private String accountType;
     private long balance;
     private long totalInvestments;
     private long totalCash;
@@ -38,14 +37,13 @@ public class Account {
     )
     private Set<Stock> allStocks;
 
-    public Account(String nameCode, String name, long balance) {
+    public Account(String nameCode, String accountType, long balance) {
         this.nameCode = nameCode;
-        this.name = name;
+        this.accountType = accountType;
         this.balance = balance;
     }
 
     public Account() {
     }
 
-    // Additional methods can be added here if needed
 }

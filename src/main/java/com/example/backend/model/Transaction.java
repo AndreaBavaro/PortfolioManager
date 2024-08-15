@@ -30,5 +30,4 @@ public class Transaction {
     @JoinColumn(name = "stock_id")
     private Stock stock;
 
-    // Additional methods can be added here if needed
 }

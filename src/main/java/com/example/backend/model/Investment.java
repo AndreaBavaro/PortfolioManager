@@ -18,7 +18,6 @@ public class Investment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
     private String currency;
     private String ticker;
     private int quantity;
@@ -33,6 +32,4 @@ public class Investment {
     @OneToOne
     @JoinColumn(name = "stock_id")
     private Stock stock;
-
-    // Additional methods can be added here if needed
 }
