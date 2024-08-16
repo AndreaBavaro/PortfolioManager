@@ -8,7 +8,7 @@ import java.util.List;
 
 public interface PortfolioService {
     public Portfolio viewPortfolio(long id);
-    public void transferToAccount(long id, String nameCode, float amount);
+    public Portfolio transferToAccount(long id, String nameCode, float amount);
     public List<Stock> viewStocks(long id);
     public List<Investment> viewInvestments(long id);
     public List<Transaction> viewTransactions(long id);

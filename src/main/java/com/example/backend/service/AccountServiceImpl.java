@@ -3,6 +3,7 @@ package com.example.backend.service;
 import com.example.backend.ResourceNotFoundException;
 import com.example.backend.dataaccess.AccountRepository;
 import com.example.backend.dataaccess.PortfolioRepository;
+import com.example.backend.dataaccess.StockRepository;
 import com.example.backend.model.Account;
 import com.example.backend.model.Investment;
 import com.example.backend.model.Portfolio;
@@ -11,7 +12,9 @@ import com.example.backend.model.Transaction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 @Service
 public class AccountServiceImpl implements AccountService {
@@ -22,10 +25,8 @@ public class AccountServiceImpl implements AccountService {
     @Autowired
     private PortfolioRepository portfolioRepository;
 
-    @Override
-    public Account createAccount(String nameCode) {
-        return null;
-    }
+    @Autowired
+    private StockRepository stockRepository;
 
     @Override
     public void transferFunds(String fromNameCode, String toNameCode, float amount) throws ResourceNotFoundException, IllegalArgumentException {
@@ -57,7 +58,7 @@ public class AccountServiceImpl implements AccountService {
         accountRepository.save(fromAccount);
         accountRepository.save(toAccount);
     }
-
+    @Override
     public Account createAccount(String nameCode, String accountType, float balance, Portfolio portfolio) throws IllegalArgumentException {
         Account account = new Account(nameCode, accountType, balance);
         portfolio.addAccount(account);
@@ -83,12 +84,42 @@ public class AccountServiceImpl implements AccountService {
     public List<Stock> viewStocks(String nameCode) {
         return accountRepository.findAllStocksByAccount(nameCode);
     }
-
+    @Override
     public List<Investment> viewInvestments(String nameCode) {
         return accountRepository.findAllInvestmentsByAccount(nameCode);
     }
-
+    @Override
     public List<Transaction> viewTransactions(String nameCode) {
         return accountRepository.findAllTransactionsByAccount(nameCode);
     }
+
+    @Override
+    public Account addToWatchList(String nameCode, String ticker) {
+        Account account = accountRepository.findByNameCode(nameCode);
+        account.addToWatchList(ticker);
+        return accountRepository.save(account);
+    }
+    @Override
+    public Account removeFromWatchList(String nameCode, String ticker) {
+        Account account = accountRepository.findByNameCode(nameCode);
+        account.removeFromWatchList(ticker);
+        return accountRepository.save(account);
+    }
+    public List<Stock> viewWatchList(String nameCode) {
+        // Retrieve the account using the nameCode
+        Account account = accountRepository.findByNameCode(nameCode);
+
+        if (account != null) {
+            // Get the set of stock tickers from the watchList
+            Set<String> watchListTickers = account.getWatchList();
+
+            // Fetch the corresponding Stock objects from the StockRepository
+
+            return stockRepository.findAllByTickerIn(watchListTickers);
+        }
+
+        // Return an empty list if account is not found or watchlist is empty
+        return new ArrayList<>();
+    }
+
 }
