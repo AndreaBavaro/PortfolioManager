@@ -1,9 +1,6 @@
 package com.example.backend.controller;
 
-import com.example.backend.model.Investment;
-import com.example.backend.model.Portfolio;
-import com.example.backend.model.Stock;
-import com.example.backend.model.Transaction;
+import com.example.backend.model.*;
 import com.example.backend.service.AccountService;
 import com.example.backend.service.PortfolioService;
 import com.example.backend.service.StockService;
@@ -13,10 +10,11 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@RestController
+@RestController("/portfolio")
 public class PortfolioController {
     @Autowired
     PortfolioService portfolioService;
+    AccountService accountService;
 
     @GetMapping("/{id}")
     public ResponseEntity<Portfolio> viewPortfolio(@PathVariable long id) {

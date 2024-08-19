@@ -37,13 +37,9 @@ public class AccountController {
     }
 
     @PostMapping
-    public ResponseEntity<Account> createAccount(@RequestParam String nameCode,
-                                                 @RequestParam String accountType,
-                                                 @RequestParam float balance,
-                                                 @RequestParam long portfolioId) {
+    public ResponseEntity<Account> createAccount(@RequestBody Account account) {
         try {
-            Portfolio portfolio = portfolioService.viewPortfolio(portfolioId);
-            Account account = accountService.createAccount(nameCode, accountType, balance, portfolio);
+            account = accountService.createAccount(account.getNameCode(), account.getAccountType(), account.getBalance(), account.getPortfolio());
             return ResponseEntity.ok(account);
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().body(null);

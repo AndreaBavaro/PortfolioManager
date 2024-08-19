@@ -13,11 +13,12 @@ import java.util.Set;
 @Getter
 @Setter
 public class Account {
+
     @Id
     private String nameCode;
     private String accountType;
-    private float balance;            // Changed from long to float
-    private float totalInvestments;   // Changed from long to float
+    private float balance;
+    private float totalInvestments;
     private float totalCash;
 
     @ManyToOne
@@ -35,32 +36,35 @@ public class Account {
     @Column(name = "ticker")
     private Set<String> watchList = new HashSet<>();
 
-    public Account(String nameCode, String accountType, float balance) {
+    // Constructor with Portfolio
+    public Account(String nameCode, String accountType, float balance, Portfolio portfolio) {
         this.nameCode = nameCode;
         this.accountType = accountType;
         this.balance = balance;
         this.totalCash = balance; // Assuming initial balance is all cash
         this.totalInvestments = 0f;
-        this.watchList = new HashSet<>();  // Initialize watchList
+        this.portfolio = portfolio;
+        this.watchList = new HashSet<>();
     }
 
+    // Default constructor
     public Account() {
         this.watchList = new HashSet<>();  // Initialize watchList
     }
 
-    public void withdraw(float amount){
+    public void withdraw(float amount) {
         this.balance -= amount;
     }
 
-    public void deposit(float amount){
+    public void deposit(float amount) {
         this.balance += amount;
     }
 
-    public void addToWatchList(String ticker){
+    public void addToWatchList(String ticker) {
         this.watchList.add(ticker);
     }
 
-    public void removeFromWatchList(String ticker){
+    public void removeFromWatchList(String ticker) {
         this.watchList.remove(ticker);
     }
 }
