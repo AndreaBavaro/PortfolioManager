@@ -50,4 +50,76 @@ public class Stock {
     public Stock() {
 
     }
+
+    public String getTicker() {
+        return ticker;
+    }
+
+    public void setTicker(String ticker) {
+        this.ticker = ticker;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public Long getPrice() {
+        return price;
+    }
+
+    public void setPrice(Long price) {
+        this.price = price;
+    }
+
+    public Long getHigh() {
+        return high;
+    }
+
+    public void setHigh(Long high) {
+        this.high = high;
+    }
+
+    public Long getLow() {
+        return low;
+    }
+
+    public void setLow(Long low) {
+        this.low = low;
+    }
+
+    public Long getVol() {
+        return vol;
+    }
+
+    public void setVol(Long vol) {
+        this.vol = vol;
+    }
+
+    public Timestamp getTimestamp() {
+        return timestamp;
+    }
+
+    public void setTimestamp(Timestamp timestamp) {
+        this.timestamp = timestamp;
+    }
+
+    public Exchange getExchange() {
+        return exchange;
+    }
+
+    public void setExchange(Exchange exchange) {
+        this.exchange = exchange;
+    }
+
+    public Set<Account> getAllAccounts() {
+        return allAccounts;
+    }
+
+    public void setAllAccounts(Set<Account> allAccounts) {
+        this.allAccounts = allAccounts;
+    }
 }

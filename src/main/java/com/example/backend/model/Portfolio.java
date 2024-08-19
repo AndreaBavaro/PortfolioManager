@@ -42,4 +42,12 @@ public class Portfolio {
     public void deposit(float amount){
         this.balance += amount;
     }
+
+    public float getBalance() {
+        return balance;
+    }
+
+    public List<Account> getAccounts() {
+        return accounts;
+    }
 }

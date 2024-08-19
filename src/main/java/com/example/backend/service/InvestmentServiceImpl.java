@@ -1,35 +1,28 @@
 package com.example.backend.service;
 
+import com.example.backend.dataaccess.AccountRepository;
 import com.example.backend.dataaccess.InvestmentRepository;
-import com.example.backend.dataaccess.TransactionRepository;
 import com.example.backend.model.Investment;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
+import java.util.Optional;
 
 public class InvestmentServiceImpl implements  InvestmentService{
 
     InvestmentRepository investmentRepository;
 
     @Override
-    public Investment createInvestment(Investment investment) {
-        return null;
+    public List<Investment> getAllInvestments() {
+        return investmentRepository.findAll();
     }
 
     @Override
-    public Investment deleteInvestment(Investment investment) {
-        return null;
+    public Investment findInvestmentByTicker(String ticker) {
+        // TODO: throw exception if not found
+        return investmentRepository.findInvestmentByTicker(ticker).orElse( null);
     }
 
-    @Override
-    public Investment updateInvestment(Investment investment) {
-        return null;
-    }
-
-    @Override
-    public List<Investment> showAllInvestments(long accountID) {
-        return List.of();
-    }
     @Autowired
     public void setInvestmentRepository(InvestmentRepository investmentRepository){
         this.investmentRepository = investmentRepository;

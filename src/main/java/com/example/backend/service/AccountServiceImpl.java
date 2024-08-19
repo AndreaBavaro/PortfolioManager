@@ -60,7 +60,7 @@ public class AccountServiceImpl implements AccountService {
     }
     @Override
     public Account createAccount(String nameCode, String accountType, float balance, Portfolio portfolio) throws IllegalArgumentException {
-        Account account = new Account(nameCode, accountType, balance);
+        Account account = new Account(nameCode, accountType, balance, portfolio);
         portfolio.addAccount(account);
         portfolioRepository.save(portfolio); // Save the portfolio with the new account
         return account;
