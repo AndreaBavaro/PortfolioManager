@@ -14,6 +14,6 @@ public interface AccountService {
     public List<Stock> viewWatchlist(String nameCode);
     public List<Investment> viewInvestments(String nameCode);
     public List<Transaction> viewTransactions(String nameCode);
-    public Account addToWatchList (String nameCode, String ticker);
-    Account removeFromWatchList(String nameCode, String ticker);
+    public Account addToWatchList (String nameCode, Stock ticker);
+    Account removeFromWatchList(String nameCode, Stock ticker);
 }

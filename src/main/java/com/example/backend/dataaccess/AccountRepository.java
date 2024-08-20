@@ -15,8 +15,9 @@ import java.util.Optional;
 @Repository
 public interface AccountRepository extends JpaRepository<Account, String> {
     Account findByNameCode(String nameCode);
+    List<Account> findByPortfolioId(long portfolioId);
 
-    @Query("SELECT w.stockTicker FROM Watchlist w WHERE w.accountId = :nameCode")
+    @Query("SELECT a.watchList FROM Account a WHERE a.nameCode = :nameCode")
     List<Stock> viewWatchlistByAccount(@Param("nameCode") String nameCode);
 
     @Query("SELECT i FROM Investment i WHERE i.account.nameCode = :nameCode")
@@ -24,5 +25,6 @@ public interface AccountRepository extends JpaRepository<Account, String> {
 
     @Query("SELECT t FROM Transaction t WHERE t.account.nameCode = :nameCode")
     List<Transaction> findAllTransactionsByAccount(@Param("nameCode") String nameCode);
+
 }
 

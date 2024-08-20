@@ -1,3 +1,5 @@
+/***
+
 package com.example.backend.controller;
 
 import com.example.backend.model.*;
@@ -10,10 +12,12 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@RestController("/portfolio")
+@RestController
+@RequestMapping("/portfolio")
 public class PortfolioController {
     @Autowired
     PortfolioService portfolioService;
+    @Autowired
     AccountService accountService;
 
     @GetMapping("/{id}")
@@ -47,3 +51,4 @@ public class PortfolioController {
 
 
 }
+***/

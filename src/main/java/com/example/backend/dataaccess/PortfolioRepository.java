@@ -7,14 +7,13 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
-public interface PortfolioRepository extends JpaRepository<Portfolio, String> {
-    <Optional>Portfolio findById(long id);
+public interface PortfolioRepository extends JpaRepository<Portfolio, Long> {
+    Optional<Portfolio> findById(long id);
 
     @Query("SELECT a FROM Account a WHERE a.portfolio.id = :portfolioId")
     List<Account> findAllAccountsByPortfolio(@Param("portfolioId") Long portfolioId);
-
-
 
 }

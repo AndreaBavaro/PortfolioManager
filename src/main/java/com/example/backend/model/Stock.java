@@ -1,40 +1,51 @@
 package com.example.backend.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.ManyToMany;
-import jakarta.persistence.ManyToOne;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.sql.Timestamp;
-import java.util.List;
-import java.util.Set;
-@Setter
+
 @Getter
+@Setter
 @Entity
+@Table(name = "stocks") // Use plural form for table names
 public class Stock {
 
     @Id
+    @Column(name = "ticker", nullable = false) // Primary key
     private String ticker;
+
+    @Column(name = "name")
     private String name;
+
+    @Column(name = "price")
     private Long price;
+
+    @Column(name = "high")
     private Long high;
+
+    @Column(name = "low")
     private Long low;
+
+    @Column(name = "vol")
     private Long vol;
 
+    @Column(name = "timestamp")
     private Timestamp timestamp;
 
     @ManyToOne
+    @JoinColumn(name = "exchange_market_identifier_code")
+    @JsonIgnore
     private Exchange exchange;
 
-
-
-
-    public Stock(String ticker, String name, Long price, Long high, Long low, Long vol, Exchange exchange, Timestamp timestamp) {
-
+    // Default constructor
+    public Stock() {
     }
 
+    // Constructor with all fields except timestamp
     public Stock(String ticker, String name, Long price, Long high, Long low, Long vol, Exchange exchange) {
         this.ticker = ticker;
         this.name = name;
@@ -43,74 +54,17 @@ public class Stock {
         this.low = low;
         this.vol = vol;
         this.exchange = exchange;
-        this.timestamp = timestamp;
     }
 
-    public Stock() {
-
-    }
-
-    public String getTicker() {
-        return ticker;
-    }
-
-    public void setTicker(String ticker) {
+    // Constructor with all fields
+    public Stock(String ticker, String name, Long price, Long high, Long low, Long vol, Exchange exchange, Timestamp timestamp) {
         this.ticker = ticker;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
         this.name = name;
-    }
-
-    public Long getPrice() {
-        return price;
-    }
-
-    public void setPrice(Long price) {
         this.price = price;
-    }
-
-    public Long getHigh() {
-        return high;
-    }
-
-    public void setHigh(Long high) {
         this.high = high;
-    }
-
-    public Long getLow() {
-        return low;
-    }
-
-    public void setLow(Long low) {
         this.low = low;
-    }
-
-    public Long getVol() {
-        return vol;
-    }
-
-    public void setVol(Long vol) {
         this.vol = vol;
-    }
-
-    public Timestamp getTimestamp() {
-        return timestamp;
-    }
-
-    public void setTimestamp(Timestamp timestamp) {
-        this.timestamp = timestamp;
-    }
-
-    public Exchange getExchange() {
-        return exchange;
-    }
-
-    public void setExchange(Exchange exchange) {
         this.exchange = exchange;
+        this.timestamp = timestamp;
     }
 }

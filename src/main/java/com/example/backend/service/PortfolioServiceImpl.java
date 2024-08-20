@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
@@ -25,19 +26,24 @@ public class PortfolioServiceImpl implements PortfolioService {
 
     @Override
     public Portfolio viewPortfolio(long id) throws IllegalArgumentException {
-        Portfolio portfolio = portfolioRepository.findById(id);
-        if (portfolio == null) {
-            throw new IllegalArgumentException("Portfolio not found");
-        }
-        return portfolio;
+        return portfolioRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Portfolio not found"));
     }
 
     @Override
-    public Portfolio transferToAccount(long id, String nameCode, float amount) throws IllegalArgumentException {
-        Portfolio portfolio = portfolioRepository.findById(id);
-        if (portfolio == null) {
-            throw new IllegalArgumentException("Portfolio not found");
+    public List<Account> viewAccounts(long portfolioId) {
+        List<Account> accounts = accountRepository.findByPortfolioId(portfolioId);
+        if (accounts.isEmpty()) {
+            // Return an empty list instead of throwing an exception
+            return Collections.emptyList();
         }
+        return accounts;
+    }
+
+
+    @Override
+    public Portfolio transferToAccount(long id, String nameCode, float amount) throws IllegalArgumentException {
+        Portfolio portfolio = viewPortfolio(id);
 
         Account account = accountRepository.findByNameCode(nameCode);
         if (account == null) {
@@ -58,14 +64,11 @@ public class PortfolioServiceImpl implements PortfolioService {
 
     @Override
     public List<Stock> viewStocks(long id) throws IllegalArgumentException {
-        Portfolio portfolio = portfolioRepository.findById(id);
-        if (portfolio == null) {
-            throw new IllegalArgumentException("Portfolio not found");
-        }
+        Portfolio portfolio = viewPortfolio(id);
 
         List<Stock> allStocks = new ArrayList<>();
         for (Account account : portfolio.getAccounts()) {
-            Set<String> watchListTickers = account.getWatchList();
+            Set<Stock> watchListTickers = account.getWatchList();
             if (!watchListTickers.isEmpty()) {
                 List<Stock> stocks = stockRepository.findAllByTickerIn(watchListTickers);
                 allStocks.addAll(stocks);
@@ -77,10 +80,7 @@ public class PortfolioServiceImpl implements PortfolioService {
 
     @Override
     public List<Investment> viewInvestments(long id) throws IllegalArgumentException {
-        Portfolio portfolio = portfolioRepository.findById(id);
-        if (portfolio == null) {
-            throw new IllegalArgumentException("Portfolio not found");
-        }
+        Portfolio portfolio = viewPortfolio(id);
 
         List<Investment> allInvestments = new ArrayList<>();
         for (Account account : portfolio.getAccounts()) {
@@ -92,10 +92,7 @@ public class PortfolioServiceImpl implements PortfolioService {
 
     @Override
     public List<Transaction> viewTransactions(long id) throws IllegalArgumentException {
-        Portfolio portfolio = portfolioRepository.findById(id);
-        if (portfolio == null) {
-            throw new IllegalArgumentException("Portfolio not found");
-        }
+        Portfolio portfolio = viewPortfolio(id);
 
         List<Transaction> allTransactions = new ArrayList<>();
         for (Account account : portfolio.getAccounts()) {

@@ -3,6 +3,8 @@ package com.example.backend.controller;
 import com.example.backend.ResourceNotFoundException;
 import com.example.backend.model.*;
 import com.example.backend.service.AccountService;
+
+/**
 import com.example.backend.service.PortfolioService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -39,12 +41,21 @@ public class AccountController {
     @PostMapping
     public ResponseEntity<Account> createAccount(@RequestBody Account account) {
         try {
-            account = accountService.createAccount(account.getNameCode(), account.getAccountType(), account.getBalance(), account.getPortfolio());
+            if (account.getPortfolio().getName() == null || account.getPortfolio().getName().isEmpty()) {
+                throw new IllegalArgumentException("Portfolio name cannot be null or empty");
+            }
+            account = accountService.createAccount(
+                    account.getNameCode(),
+                    account.getAccountType(),
+                    account.getBalance(),
+                    account.getPortfolio()
+            );
             return ResponseEntity.ok(account);
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().body(null);
         }
     }
+
 
     @PutMapping("/{fromNameCode}/transfer/{toNameCode}")
     public ResponseEntity<Void> transferFunds(@PathVariable String fromNameCode,
@@ -90,3 +101,4 @@ public class AccountController {
         return ResponseEntity.ok(accountService.removeFromWatchList(nameCode, ticker));
     }
 }
+**/

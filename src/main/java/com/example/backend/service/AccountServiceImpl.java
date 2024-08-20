@@ -4,17 +4,11 @@ import com.example.backend.ResourceNotFoundException;
 import com.example.backend.dataaccess.AccountRepository;
 import com.example.backend.dataaccess.PortfolioRepository;
 import com.example.backend.dataaccess.StockRepository;
-import com.example.backend.model.Account;
-import com.example.backend.model.Investment;
-import com.example.backend.model.Portfolio;
-import com.example.backend.model.Stock;
-import com.example.backend.model.Transaction;
+import com.example.backend.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 @Service
 public class AccountServiceImpl implements AccountService {
@@ -94,13 +88,13 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public Account addToWatchList(String nameCode, String ticker) {
+    public Account addToWatchList(String nameCode, Stock ticker) {
         Account account = accountRepository.findByNameCode(nameCode);
         account.addToWatchList(ticker);
         return accountRepository.save(account);
     }
     @Override
-    public Account removeFromWatchList(String nameCode, String ticker) {
+    public Account removeFromWatchList(String nameCode, Stock ticker) {
         Account account = accountRepository.findByNameCode(nameCode);
         account.removeFromWatchList(ticker);
         return accountRepository.save(account);

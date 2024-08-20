@@ -1,5 +1,7 @@
 package com.example.backend.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -12,85 +14,49 @@ import java.sql.Timestamp;
 @Setter
 @AllArgsConstructor
 @Entity
+@Table(name = "transactions") // Use plural form for table names
 public class Transaction {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "transactionid") // Primary key
     private long transactionID;
 
+    @Column(name = "type")
     private String type;
+
+    @Column(name = "amount")
     private int amount;
+
+    @Column(name = "transaction_time")
     private Timestamp transactionTime;
 
     @ManyToOne
     @JoinColumn(name = "account_id")
+    @JsonIgnore
     private Account account;
 
     @ManyToOne
     @JoinColumn(name = "stock_id")
+    @JsonIgnore
     private Stock stock;
 
     @ManyToOne
     @JoinColumn(name = "investment_id")
+    @JsonIgnore
     private Investment investment;
 
-
+    // Default constructor
     public Transaction() {
     }
 
-    public Transaction(long transactionID, String type, int amount, Timestamp transactionTime, Stock stock, Account account) {
-        this.transactionID = transactionID;
+    // Constructor with necessary fields
+    public Transaction(String type, int amount, Timestamp transactionTime, Account account, Stock stock, Investment investment) {
         this.type = type;
         this.amount = amount;
         this.transactionTime = transactionTime;
-        this.stock = stock;
         this.account = account;
-    }
-
-    public long getTransactionID() {
-        return transactionID;
-    }
-
-    public void setTransactionID(long transactionID) {
-        this.transactionID = transactionID;
-    }
-
-    public String getType() {
-        return type;
-    }
-
-    public void setType(String type) {
-        this.type = type;
-    }
-
-    public Timestamp getTransactionTime() {
-        return transactionTime;
-    }
-
-    public void setTransactionTime(Timestamp transactionTime) {
-        this.transactionTime = transactionTime;
-    }
-
-    public int getAmount() {
-        return amount;
-    }
-
-    public void setAmount(int amount) {
-        this.amount = amount;
-    }
-
-    public Account getAccount() {
-        return account;
-    }
-
-    public void setAccount(Account account) {
-        this.account = account;
-    }
-
-    public Stock getStock() {
-        return stock;
-    }
-
-    public void setStock(Stock stock) {
         this.stock = stock;
+        this.investment = investment;
     }
 }
