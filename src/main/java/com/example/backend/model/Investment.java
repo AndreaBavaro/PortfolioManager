@@ -32,6 +32,7 @@ public class Investment {
     @JoinColumn(name = "stock_id")
     private Stock stock;
 
+
     public Investment() {
     }
 

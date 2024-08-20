@@ -29,6 +29,11 @@ public class Transaction {
     @JoinColumn(name = "stock_id")
     private Stock stock;
 
+    @ManyToOne
+    @JoinColumn(name = "investment_id")
+    private Investment investment;
+
+
     public Transaction() {
     }
 

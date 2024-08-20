@@ -81,8 +81,8 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public List<Stock> viewStocks(String nameCode) {
-        return accountRepository.findAllStocksByAccount(nameCode);
+    public List<Stock> viewWatchlist(String nameCode) {
+        return accountRepository.viewWatchlistByAccount(nameCode);
     }
     @Override
     public List<Investment> viewInvestments(String nameCode) {
@@ -104,22 +104,6 @@ public class AccountServiceImpl implements AccountService {
         Account account = accountRepository.findByNameCode(nameCode);
         account.removeFromWatchList(ticker);
         return accountRepository.save(account);
-    }
-    public List<Stock> viewWatchList(String nameCode) {
-        // Retrieve the account using the nameCode
-        Account account = accountRepository.findByNameCode(nameCode);
-
-        if (account != null) {
-            // Get the set of stock tickers from the watchList
-            Set<String> watchListTickers = account.getWatchList();
-
-            // Fetch the corresponding Stock objects from the StockRepository
-
-            return stockRepository.findAllByTickerIn(watchListTickers);
-        }
-
-        // Return an empty list if account is not found or watchlist is empty
-        return new ArrayList<>();
     }
 
 }

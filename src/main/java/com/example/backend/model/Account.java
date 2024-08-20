@@ -30,6 +30,7 @@ public class Account {
     @OneToMany(mappedBy = "account", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Transaction> transactions = new ArrayList<>();
 
+
     @ElementCollection
     @CollectionTable(name = "watchlist", joinColumns = @JoinColumn(name = "account_id"))
     @Column(name = "ticker")

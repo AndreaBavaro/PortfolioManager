@@ -60,7 +60,7 @@ public class AccountController {
 
     @GetMapping("/{nameCode}/stocks")
     public ResponseEntity<List<Stock>> viewStocks(@PathVariable String nameCode) {
-        return ResponseEntity.ok(accountService.viewStocks(nameCode));
+        return ResponseEntity.ok(accountService.viewWatchlist(nameCode));
     }
 
     @GetMapping("/{nameCode}/investments")
@@ -75,7 +75,7 @@ public class AccountController {
 
     @GetMapping("/{nameCode}/watchlist")
     public ResponseEntity<List<Stock>> viewWatchList(@PathVariable String nameCode) {
-        return ResponseEntity.ok(accountService.viewStocks(nameCode));
+        return ResponseEntity.ok(accountService.viewWatchlist(nameCode));
     }
 
     @PostMapping("/{nameCode}/watchlist/{ticker}")

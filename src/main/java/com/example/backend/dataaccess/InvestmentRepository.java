@@ -11,6 +11,7 @@ import java.util.Optional;
 @Repository
 public interface InvestmentRepository extends JpaRepository<Investment, Long> {
 
-    @Query("SELECT * FROM investment WHERE ticker = :ticker")
+    @Query("SELECT i FROM Investment i WHERE i.ticker = :ticker")
     Optional<Investment> findInvestmentByTicker(@Param("ticker") String ticker);
+
 }

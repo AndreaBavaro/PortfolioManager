@@ -11,7 +11,7 @@ public interface AccountService {
     public Account createAccount(String nameCode, String accountType, float balance, Portfolio portfolio) throws IllegalArgumentException;
     public Iterable<Account> getAllAccounts();
     public Account viewAccount(String nameCode);
-    public List<Stock> viewStocks(String nameCode);
+    public List<Stock> viewWatchlist(String nameCode);
     public List<Investment> viewInvestments(String nameCode);
     public List<Transaction> viewTransactions(String nameCode);
     public Account addToWatchList (String nameCode, String ticker);

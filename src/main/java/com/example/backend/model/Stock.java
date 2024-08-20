@@ -8,6 +8,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.sql.Timestamp;
+import java.util.List;
 import java.util.Set;
 @Setter
 @Getter
@@ -28,8 +29,6 @@ public class Stock {
     private Exchange exchange;
 
 
-    @ManyToMany(mappedBy = "allStocks")
-    Set<Account> allAccounts;
 
 
     public Stock(String ticker, String name, Long price, Long high, Long low, Long vol, Exchange exchange, Timestamp timestamp) {
@@ -113,13 +112,5 @@ public class Stock {
 
     public void setExchange(Exchange exchange) {
         this.exchange = exchange;
-    }
-
-    public Set<Account> getAllAccounts() {
-        return allAccounts;
-    }
-
-    public void setAllAccounts(Set<Account> allAccounts) {
-        this.allAccounts = allAccounts;
     }
 }

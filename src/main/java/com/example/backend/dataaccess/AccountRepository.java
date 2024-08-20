@@ -16,12 +16,13 @@ import java.util.Optional;
 public interface AccountRepository extends JpaRepository<Account, String> {
     Account findByNameCode(String nameCode);
 
-    @Query("SELECT stock from stock_per_account s WHERE s.account = :nameCode")
-    List<Stock> findAllStocksByAccount(@Param("nameCode") String nameCode);
+    @Query("SELECT w.stockTicker FROM Watchlist w WHERE w.accountId = :nameCode")
+    List<Stock> viewWatchlistByAccount(@Param("nameCode") String nameCode);
 
-    @Query("SELECT investment from Investments s WHERE s.account = :nameCode")
+    @Query("SELECT i FROM Investment i WHERE i.account.nameCode = :nameCode")
     List<Investment> findAllInvestmentsByAccount(@Param("nameCode") String nameCode);
 
-    @Query("SELECT transaction from Transactions s WHERE s.account = :nameCode")
-    List<Transaction>findAllTransactionsByAccount(@Param("nameCode") String id);
+    @Query("SELECT t FROM Transaction t WHERE t.account.nameCode = :nameCode")
+    List<Transaction> findAllTransactionsByAccount(@Param("nameCode") String nameCode);
 }
+
