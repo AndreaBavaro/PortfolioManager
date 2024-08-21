@@ -13,5 +13,5 @@ public interface StockRepository extends JpaRepository<Stock, String> {
     Stock findByTicker(String ticker);
 
     // Method to find all Stock objects by a set of tickers
-    List<Stock> findAllByTickerIn(Set<Stock> tickers);
+    List<Stock> findAllByTickerIn(Set<String> tickers);
 }

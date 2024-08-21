@@ -45,13 +45,14 @@ public class Account {
     @JsonIgnore
     private List<Transaction> transactions = new ArrayList<>();
 
-    @ManyToMany
+    @ElementCollection(fetch = FetchType.LAZY)
     @JoinTable(
             name = "account_watchlist",
-            joinColumns = @JoinColumn(name = "name_code"),
-            inverseJoinColumns = @JoinColumn(name = "ticker")
+            joinColumns = @JoinColumn(name = "name_code", referencedColumnName = "name_code")
     )
-    private Set<Stock> watchList = new HashSet<>();
+    @Column(name = "ticker")
+    private Set<String> watchList = new HashSet<>();
+
 
     public Account(String nameCode, String accountType, float balance, Portfolio portfolio) {
         this.nameCode = nameCode;
@@ -88,10 +89,10 @@ public class Account {
     }
 
     public void addToWatchList(Stock stock) {
-        this.watchList.add(stock);
+        this.watchList.add(stock.getTicker());
     }
 
     public void removeFromWatchList(Stock stock) {
-        this.watchList.remove(stock);
+        this.watchList.remove(stock.getTicker());
     }
 }

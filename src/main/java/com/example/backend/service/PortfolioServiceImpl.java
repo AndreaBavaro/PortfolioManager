@@ -68,7 +68,7 @@ public class PortfolioServiceImpl implements PortfolioService {
 
         List<Stock> allStocks = new ArrayList<>();
         for (Account account : portfolio.getAccounts()) {
-            Set<Stock> watchListTickers = account.getWatchList();
+            Set<String> watchListTickers = account.getWatchList(); // Changed to Set<String>
             if (!watchListTickers.isEmpty()) {
                 List<Stock> stocks = stockRepository.findAllByTickerIn(watchListTickers);
                 allStocks.addAll(stocks);
@@ -77,6 +77,7 @@ public class PortfolioServiceImpl implements PortfolioService {
 
         return allStocks;
     }
+
 
     @Override
     public List<Investment> viewInvestments(long id) throws IllegalArgumentException {

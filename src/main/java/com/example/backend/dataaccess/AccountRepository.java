@@ -17,7 +17,7 @@ public interface AccountRepository extends JpaRepository<Account, String> {
     Account findByNameCode(String nameCode);
     List<Account> findByPortfolioId(long portfolioId);
 
-    @Query("SELECT a.watchList FROM Account a WHERE a.nameCode = :nameCode")
+    @Query(value = "SELECT s.* FROM account_watchlist aw JOIN stocks s ON aw.ticker = s.ticker WHERE aw.name_code = :nameCode", nativeQuery = true)
     List<Stock> viewWatchlistByAccount(@Param("nameCode") String nameCode);
 
     @Query("SELECT i FROM Investment i WHERE i.account.nameCode = :nameCode")
