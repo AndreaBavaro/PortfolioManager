@@ -32,24 +32,31 @@ public class StockController {
         try {
             Stock stock = stockService.findStock(ticker);
 
-            if (stock == null) {
-                // Stock not found in the database, fetch it from the API
+            if (stock == null || stock.getTicker() == null || stock.getTicker().isEmpty() || stock.getPrice() <= 0) {
+                // Stock not found in the database or stock object is invalid, fetch it from the API
                 stock = stockService.updateStockDataFromAPI(ticker);
-                if (stock != null) {
+                if (stock != null && stock.getTicker() != null && !stock.getTicker().isEmpty() && stock.getPrice() > 0) {
                     return new ResponseEntity<>(stock, HttpStatus.OK);
-                } else {
+                } else if (stock == null) {
                     return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+                } else {
+                    return new ResponseEntity<>(HttpStatus.NO_CONTENT);
                 }
             }
 
             // Stock found, update data even if it is outdated
-            stock = stockService.updateStockDataFromAPI(ticker);
-            return new ResponseEntity<>(stock, HttpStatus.OK);
+            Stock updatedStock = stockService.updateStockDataFromAPI(ticker);
+            if (updatedStock != null && updatedStock.getTicker() != null && !updatedStock.getTicker().isEmpty() && updatedStock.getPrice() > 0) {
+                return new ResponseEntity<>(updatedStock, HttpStatus.OK);
+            }
+
+            return new ResponseEntity<>(stock, HttpStatus.OK); // Return the found stock if API fails
 
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
 
     // Get 1-minute interval data
     @GetMapping("/stock/{ticker}/1min")
