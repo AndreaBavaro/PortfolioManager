@@ -4,10 +4,12 @@ import com.example.backend.dataaccess.AccountRepository;
 import com.example.backend.dataaccess.InvestmentRepository;
 import com.example.backend.model.Investment;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
 
+@Service
 public class InvestmentServiceImpl implements  InvestmentService{
 
     InvestmentRepository investmentRepository;
@@ -20,7 +22,7 @@ public class InvestmentServiceImpl implements  InvestmentService{
     @Override
     public Investment findInvestmentByTicker(String ticker) {
         // TODO: throw exception if not found
-        return investmentRepository.findInvestmentByTicker(ticker).orElse( null);
+        return investmentRepository.findInvestmentByTicker(ticker).orElseThrow();
     }
 
     @Autowired
