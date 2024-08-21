@@ -2,12 +2,11 @@ package com.example.backend.controller;
 
 import com.example.backend.model.Stock;
 import com.example.backend.service.StockService;
+import com.fasterxml.jackson.databind.JsonNode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.sql.Timestamp;
 
 @RestController
 @RequestMapping("/api")
@@ -18,8 +17,12 @@ public class StockController {
 
     @GetMapping("/stock")
     public ResponseEntity<Iterable<Stock>> getAllStocks() {
-        Iterable<Stock> stocks = stockService.findAllStock();
-        return new ResponseEntity<>(stocks, HttpStatus.OK);
+        try {
+            Iterable<Stock> stocks = stockService.findAllStock();
+            return new ResponseEntity<>(stocks, HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     @GetMapping("/stock/{ticker}")
@@ -37,21 +40,8 @@ public class StockController {
                 }
             }
 
-            // Stock found, check if it needs updating
-            Timestamp lastUpdated = stock.getTimestamp();
-            Timestamp currentTime = new Timestamp(System.currentTimeMillis());
-
-            long millisecondsSinceLastUpdate = currentTime.getTime() - lastUpdated.getTime();
-            long minutesSinceLastUpdate = millisecondsSinceLastUpdate / (1000 * 60);
-
-            if (minutesSinceLastUpdate >= 5) {
-                stock = stockService.updateStockDataFromAPI(ticker); // Update if 5 minutes have passed
-            } else {
-                // If the stock is found and within the time limit, still update the timestamp
-                stock.setTimestamp(currentTime);
-                stockService.saveStock(stock);
-            }
-
+            // Stock found, update data even if it is outdated
+            stock = stockService.updateStockDataFromAPI(ticker);
             return new ResponseEntity<>(stock, HttpStatus.OK);
 
         } catch (Exception e) {
@@ -59,5 +49,69 @@ public class StockController {
         }
     }
 
+    // Get 1-minute interval data
+    @GetMapping("/stock/{ticker}/1min")
+    public ResponseEntity<JsonNode> get1MinStockData(@PathVariable String ticker) {
+        try {
+            JsonNode data = stockService.get1MinStockData(ticker);
+            return new ResponseEntity<>(data, HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
 
+    // Get 5-minute interval data
+    @GetMapping("/stock/{ticker}/5min")
+    public ResponseEntity<JsonNode> get5MinStockData(@PathVariable String ticker) {
+        try {
+            JsonNode data = stockService.get5MinStockData(ticker);
+            return new ResponseEntity<>(data, HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    // Get hourly interval data
+    @GetMapping("/stock/{ticker}/hourly")
+    public ResponseEntity<JsonNode> getHourlyStockData(@PathVariable String ticker) {
+        try {
+            JsonNode data = stockService.getHourlyStockData(ticker);
+            return new ResponseEntity<>(data, HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    // Get daily interval data
+    @GetMapping("/stock/{ticker}/daily")
+    public ResponseEntity<JsonNode> getDailyStockData(@PathVariable String ticker) {
+        try {
+            JsonNode data = stockService.getDailyStockData(ticker);
+            return new ResponseEntity<>(data, HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    // Get weekly interval data
+    @GetMapping("/stock/{ticker}/weekly")
+    public ResponseEntity<JsonNode> getWeeklyStockData(@PathVariable String ticker) {
+        try {
+            JsonNode data = stockService.getWeeklyStockData(ticker);
+            return new ResponseEntity<>(data, HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    // Get monthly interval data
+    @GetMapping("/stock/{ticker}/monthly")
+    public ResponseEntity<JsonNode> getMonthlyStockData(@PathVariable String ticker) {
+        try {
+            JsonNode data = stockService.getMonthlyStockData(ticker);
+            return new ResponseEntity<>(data, HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
 }

@@ -1,6 +1,5 @@
 package com.example.backend.service;
 
-import com.example.backend.service.APIService;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Value;
@@ -27,14 +26,55 @@ public class APIServiceImpl implements APIService {
     public JsonNode getStockData(String symbol) throws Exception {
         String url = BASE_URL + "?function=TIME_SERIES_INTRADAY&symbol=" + symbol + "&interval=5min&apikey=" + apiKey;
         String jsonResponse = restTemplate.getForObject(url, String.class);
-
-        // Parse the JSON response
         return objectMapper.readTree(jsonResponse);
     }
+
+    @Override
     public JsonNode getStockOverview(String symbol) throws Exception {
         String url = BASE_URL + "?function=OVERVIEW&symbol=" + symbol + "&apikey=" + apiKey;
         String jsonResponse = restTemplate.getForObject(url, String.class);
         return objectMapper.readTree(jsonResponse);
     }
 
+    @Override
+    public JsonNode get1MinStockData(String symbol) throws Exception {
+        String url = BASE_URL + "?function=TIME_SERIES_INTRADAY&symbol=" + symbol + "&interval=1min&apikey=" + apiKey;
+        String jsonResponse = restTemplate.getForObject(url, String.class);
+        return objectMapper.readTree(jsonResponse);
+    }
+
+    @Override
+    public JsonNode get5MinStockData(String symbol) throws Exception {
+        String url = BASE_URL + "?function=TIME_SERIES_INTRADAY&symbol=" + symbol + "&interval=5min&apikey=" + apiKey;
+        String jsonResponse = restTemplate.getForObject(url, String.class);
+        return objectMapper.readTree(jsonResponse);
+    }
+
+    @Override
+    public JsonNode getHourlyStockData(String symbol) throws Exception {
+        String url = BASE_URL + "?function=TIME_SERIES_INTRADAY&symbol=" + symbol + "&interval=60min&apikey=" + apiKey;
+        String jsonResponse = restTemplate.getForObject(url, String.class);
+        return objectMapper.readTree(jsonResponse);
+    }
+
+    @Override
+    public JsonNode getDailyStockData(String symbol) throws Exception {
+        String url = BASE_URL + "?function=TIME_SERIES_DAILY&symbol=" + symbol + "&apikey=" + apiKey;
+        String jsonResponse = restTemplate.getForObject(url, String.class);
+        return objectMapper.readTree(jsonResponse);
+    }
+
+    @Override
+    public JsonNode getWeeklyStockData(String symbol) throws Exception {
+        String url = BASE_URL + "?function=TIME_SERIES_WEEKLY&symbol=" + symbol + "&apikey=" + apiKey;
+        String jsonResponse = restTemplate.getForObject(url, String.class);
+        return objectMapper.readTree(jsonResponse);
+    }
+
+    @Override
+    public JsonNode getMonthlyStockData(String symbol) throws Exception {
+        String url = BASE_URL + "?function=TIME_SERIES_MONTHLY&symbol=" + symbol + "&apikey=" + apiKey;
+        String jsonResponse = restTemplate.getForObject(url, String.class);
+        return objectMapper.readTree(jsonResponse);
+    }
 }
