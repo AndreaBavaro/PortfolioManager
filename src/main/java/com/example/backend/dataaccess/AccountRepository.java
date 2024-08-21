@@ -10,14 +10,17 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
-import java.util.Optional;
 
 @Repository
 public interface AccountRepository extends JpaRepository<Account, String> {
+
     Account findByNameCode(String nameCode);
+
     List<Account> findByPortfolioId(long portfolioId);
 
-    @Query(value = "SELECT s.* FROM account_watchlist aw JOIN stocks s ON aw.ticker = s.ticker WHERE aw.name_code = :nameCode", nativeQuery = true)
+    @Query(value = "SELECT s FROM Stock s " +
+            "JOIN Account a ON a.nameCode = :nameCode " +
+            "JOIN a.watchList w ON w = s.ticker")
     List<Stock> viewWatchlistByAccount(@Param("nameCode") String nameCode);
 
     @Query("SELECT i FROM Investment i WHERE i.account.nameCode = :nameCode")
@@ -25,6 +28,4 @@ public interface AccountRepository extends JpaRepository<Account, String> {
 
     @Query("SELECT t FROM Transaction t WHERE t.account.nameCode = :nameCode")
     List<Transaction> findAllTransactionsByAccount(@Param("nameCode") String nameCode);
-
 }
-

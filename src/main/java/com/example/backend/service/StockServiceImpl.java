@@ -151,4 +151,42 @@ public class StockServiceImpl implements StockService {
     public JsonNode getMonthlyStockData(String ticker) throws Exception {
         return apiService.getMonthlyStockData(ticker);
     }
+
+    @Override
+    public void saveSimulatedData(String ticker, LocalDateTime startTime, LocalDateTime endTime) throws Exception {
+        LocalDateTime currentTime = startTime;
+        while (!currentTime.isAfter(endTime)) {
+            JsonNode stockData = apiService.get1MinStockData(ticker);
+            // Assuming the timestamp in the response matches the currentTime or can be parsed accordingly
+            if (stockData != null && stockData.has("Time Series (1min)")) {
+                JsonNode timeSeries = stockData.get("Time Series (1min)");
+                Iterator<Map.Entry<String, JsonNode>> fields = timeSeries.fields();
+                if (fields.hasNext()) {
+                    Map.Entry<String, JsonNode> latestEntry = fields.next();
+                    String timestampStr = latestEntry.getKey();
+                    JsonNode latestData = latestEntry.getValue();
+
+                    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+                    LocalDateTime localDateTime = LocalDateTime.parse(timestampStr, formatter);
+                    Timestamp timestamp = Timestamp.valueOf(localDateTime);
+
+                    Long price = latestData.get("4. close").asLong();
+                    Long high = latestData.get("2. high").asLong();
+                    Long low = latestData.get("3. low").asLong();
+                    Long volume = latestData.get("5. volume").asLong();
+
+                    Stock stock = stockRepository.findById(ticker).orElse(new Stock());
+                    stock.setTicker(ticker);
+                    stock.setPrice(price);
+                    stock.setHigh(high);
+                    stock.setLow(low);
+                    stock.setVol(volume);
+                    stock.setTimestamp(timestamp);
+
+                    stockRepository.save(stock);
+                }
+            }
+            currentTime = currentTime.plusMinutes(1);
+        }
+    }
 }

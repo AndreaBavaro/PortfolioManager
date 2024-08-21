@@ -4,6 +4,8 @@ import com.example.backend.model.Stock;
 import com.fasterxml.jackson.databind.JsonNode;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+
 @Service
 public interface StockService {
     Stock findStock(String ticker);
@@ -19,4 +21,5 @@ public interface StockService {
     JsonNode getDailyStockData(String ticker) throws Exception;
     JsonNode getWeeklyStockData(String ticker) throws Exception;
     JsonNode getMonthlyStockData(String ticker) throws Exception;
+    void saveSimulatedData(String ticker, LocalDateTime startTime, LocalDateTime endTime) throws Exception;
 }

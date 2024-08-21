@@ -8,6 +8,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
+
 @RestController
 @RequestMapping("/api")
 public class StockController {
@@ -114,4 +116,17 @@ public class StockController {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
+    @GetMapping("/stock/{ticker}/simulate")
+    public ResponseEntity<String> simulateStockData(@PathVariable String ticker) {
+        try {
+            LocalDateTime startTime = LocalDateTime.of(2024, 8, 19, 9, 0);  // Example: 9:00 AM yesterday
+            LocalDateTime endTime = LocalDateTime.of(2024, 8, 19, 16, 0);   // Example: 4:00 PM yesterday
+            stockService.saveSimulatedData(ticker, startTime, endTime);
+            return new ResponseEntity<>("Simulation completed successfully", HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
 }
