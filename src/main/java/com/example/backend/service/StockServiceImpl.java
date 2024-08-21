@@ -78,17 +78,18 @@ public class StockServiceImpl implements StockService {
                     String timestampStr = latestEntry.getKey();
                     JsonNode latestData = latestEntry.getValue();
 
-                    Long price = latestData.get("4. close").asLong();
-                    Long high = latestData.get("2. high").asLong();
-                    Long low = latestData.get("3. low").asLong();
-                    Long volume = latestData.get("5. volume").asLong();
-
                     // Parse the timestamp string (format 'yyyy-MM-dd HH:mm:ss')
                     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
                     LocalDateTime localDateTime = LocalDateTime.parse(timestampStr, formatter);
 
                     // Convert LocalDateTime to java.sql.Timestamp
                     Timestamp timestamp = Timestamp.valueOf(localDateTime);
+
+                    // Always update the stock, even if the data is outdated
+                    Long price = latestData.get("4. close").asLong();
+                    Long high = latestData.get("2. high").asLong();
+                    Long low = latestData.get("3. low").asLong();
+                    Long volume = latestData.get("5. volume").asLong();
 
                     // Extract the stock name from the overview response
                     String name = stockOverview.has("Name") ? stockOverview.get("Name").asText() : "Unknown";

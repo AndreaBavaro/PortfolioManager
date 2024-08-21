@@ -26,25 +26,38 @@ public class StockController {
     public ResponseEntity<Stock> getStock(@PathVariable String ticker) {
         try {
             Stock stock = stockService.findStock(ticker);
-            if (stock != null) {
-                // Check if 5 minutes have passed since the last update
-                Timestamp lastUpdated = stock.getTimestamp();
-                Timestamp currentTime = new Timestamp(System.currentTimeMillis());
 
-                long millisecondsSinceLastUpdate = currentTime.getTime() - lastUpdated.getTime();
-                long minutesSinceLastUpdate = millisecondsSinceLastUpdate / (1000 * 60);
-
-                if (minutesSinceLastUpdate >= 5) {
-                    stock = stockService.updateStockDataFromAPI(ticker); // Update only if 5 minutes have passed
+            if (stock == null) {
+                // Stock not found in the database, fetch it from the API
+                stock = stockService.updateStockDataFromAPI(ticker);
+                if (stock != null) {
+                    return new ResponseEntity<>(stock, HttpStatus.OK);
+                } else {
+                    return new ResponseEntity<>(HttpStatus.NOT_FOUND);
                 }
-
-                return new ResponseEntity<>(stock, HttpStatus.OK);
-            } else {
-                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
             }
+
+            // Stock found, check if it needs updating
+            Timestamp lastUpdated = stock.getTimestamp();
+            Timestamp currentTime = new Timestamp(System.currentTimeMillis());
+
+            long millisecondsSinceLastUpdate = currentTime.getTime() - lastUpdated.getTime();
+            long minutesSinceLastUpdate = millisecondsSinceLastUpdate / (1000 * 60);
+
+            if (minutesSinceLastUpdate >= 5) {
+                stock = stockService.updateStockDataFromAPI(ticker); // Update if 5 minutes have passed
+            } else {
+                // If the stock is found and within the time limit, still update the timestamp
+                stock.setTimestamp(currentTime);
+                stockService.saveStock(stock);
+            }
+
+            return new ResponseEntity<>(stock, HttpStatus.OK);
+
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
 
 }
