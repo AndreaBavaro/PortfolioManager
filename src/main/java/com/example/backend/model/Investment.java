@@ -56,4 +56,9 @@ public class Investment {
         this.account = account;
         this.stock = stock;
     }
+
+    public void addTransaction(Transaction transaction) {
+        this.transactions.add(transaction);
+        transaction.setInvestment(this);
+    }
 }

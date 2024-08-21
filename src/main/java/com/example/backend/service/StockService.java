@@ -7,4 +7,5 @@ import org.springframework.stereotype.Service;
 public interface StockService {
     public Stock saveStock(Stock stock);
     public Iterable<Stock> findAllStock();
+    public Stock viewStock(String ticker);
 }

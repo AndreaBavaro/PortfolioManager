@@ -1,8 +1,6 @@
 package com.example.backend.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -29,7 +27,7 @@ public class Account {
     private float balance;
 
     @Column(name = "total_investments", nullable = false)
-    private long totalInvestments; // Changed to long
+    private float totalInvestments;
 
     @Column(name = "total_cash", nullable = false)
     private float totalCash;
@@ -58,8 +56,8 @@ public class Account {
     public Account(String nameCode, String accountType, float balance, Portfolio portfolio) {
         this.nameCode = nameCode;
         this.accountType = accountType;
+        this.totalCash = totalCash;
         this.balance = balance;
-        this.totalCash = balance;
         this.totalInvestments = 0;
         this.portfolio = portfolio;
         this.watchList = new HashSet<>();
@@ -69,12 +67,24 @@ public class Account {
         this.watchList = new HashSet<>();
     }
 
-    public void withdraw(float amount) {
-        this.balance -= amount;
+    public void withdraw(float newCashAmount) {
+        this.totalCash -= newCashAmount;
+        this.balance = this.totalCash + this.totalInvestments;
     }
 
-    public void deposit(float amount) {
-        this.balance += amount;
+    public void deposit(float newCashAmount) {
+        this.totalCash += newCashAmount;
+        this.balance = this.totalCash + this.totalInvestments;
+    }
+
+    public void addToTotalInvestments(float investmentCost) {
+        this.totalInvestments += investmentCost;
+        this.balance = this.totalCash + this.totalInvestments;
+    }
+
+    public void removeFromTotalInvestments(float investmentCost) {
+        this.totalInvestments -= investmentCost;
+        this.balance = this.totalCash + this.totalInvestments;
     }
 
     public void addToWatchList(Stock stock) {
