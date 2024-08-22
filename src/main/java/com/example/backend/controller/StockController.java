@@ -165,5 +165,19 @@ public class StockController {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+    @GetMapping("/stock/{ticker}/{interval}/change")
+    public ResponseEntity<Double> getPercentageChange(@PathVariable String ticker, @PathVariable String interval) {
+        try {
+            Double percentageChange = stockService.calculatePercentageChange(ticker, interval);
+            if (percentageChange != null) {
+                return new ResponseEntity<>(percentageChange, HttpStatus.OK);
+            } else {
+                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            }
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
 
 }
