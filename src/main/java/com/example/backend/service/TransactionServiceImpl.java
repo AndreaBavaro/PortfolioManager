@@ -79,7 +79,6 @@ public class TransactionServiceImpl implements  TransactionService {
         if (investment.isPresent()) {
             int currentQuantity = investment.get().getQuantity();
             investment.get().setQuantity(currentQuantity + transaction.getAmount());
-            investment.get().addTransaction(transaction);
         } else {
             createNewInvestment(transaction, stock);
         }
@@ -99,7 +98,6 @@ public class TransactionServiceImpl implements  TransactionService {
         newInvestment.setTicker(stock.getTicker());
         newInvestment.setAccount(transaction.getAccount());
         newInvestment.setStock(stock);
-        newInvestment.addTransaction(transaction);
         investmentRepository.save(newInvestment);
     }
 
@@ -122,8 +120,6 @@ public class TransactionServiceImpl implements  TransactionService {
 
         // update investment, and delete investment in quantity is 0
         Optional<Investment> investment = investmentRepository.findInvestmentByTickerAndNameCode(stock.getTicker(), account.getNameCode());
-        investment.get().addTransaction(transaction);
-
         int updatedQuantity = investment.get().getQuantity() - transaction.getAmount();
         if (updatedQuantity > 0) {
             investment.get().setQuantity(updatedQuantity);

@@ -40,10 +40,6 @@ public class Investment {
     @JoinColumn(name = "account_id")
     private Account account;
 
-    @OneToMany(mappedBy = "investment", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonIgnore
-    private List<Transaction> transactions = new ArrayList<>();
-
     @OneToOne
     @JoinColumn(name = "stock_id")
     private Stock stock;
@@ -55,10 +51,5 @@ public class Investment {
         this.quantity = quantity;
         this.account = account;
         this.stock = stock;
-    }
-
-    public void addTransaction(Transaction transaction) {
-        this.transactions.add(transaction);
-        transaction.setInvestment(this);
     }
 }

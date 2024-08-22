@@ -41,22 +41,16 @@ public class Transaction {
     @JsonIgnore
     private Stock stock;
 
-    @ManyToOne
-    @JoinColumn(name = "investment_id")
-    @JsonIgnore
-    private Investment investment;
-
     // Default constructor
     public Transaction() {
     }
 
     // Constructor with necessary fields
-    public Transaction(String type, int amount, Timestamp transactionTime, Account account, Stock stock, Investment investment) {
+    public Transaction(String type, int amount, Timestamp transactionTime, Account account, Stock stock) {
         this.type = type;
         this.amount = amount;
         this.transactionTime = transactionTime;
         this.account = account;
         this.stock = stock;
-        this.investment = investment;
     }
 }
