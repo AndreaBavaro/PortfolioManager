@@ -36,7 +36,7 @@ public class APIServiceImpl implements APIService {
         return objectMapper.readTree(jsonResponse);
     }
 
-    @Override
+
     public JsonNode get1MinStockData(String symbol) throws Exception {
         String url = BASE_URL + "?function=TIME_SERIES_INTRADAY&symbol=" + symbol + "&interval=1min&apikey=" + apiKey;
         String jsonResponse = restTemplate.getForObject(url, String.class);
@@ -78,3 +78,4 @@ public class APIServiceImpl implements APIService {
         return objectMapper.readTree(jsonResponse);
     }
 }
+
