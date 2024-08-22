@@ -4,6 +4,8 @@ import com.example.backend.ResourceNotFoundException;
 import com.example.backend.dataaccess.StockRepository;
 import com.example.backend.model.Stock;
 import com.fasterxml.jackson.databind.JsonNode;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -11,13 +13,13 @@ import org.springframework.stereotype.Service;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
+
 
 @Service
 public class StockServiceImpl implements StockService {
+    private static final Logger logger = LoggerFactory.getLogger(StockServiceImpl.class);
+
 
     private StockRepository stockRepository;
     private APIService apiService;
@@ -189,4 +191,128 @@ public class StockServiceImpl implements StockService {
             currentTime = currentTime.plusMinutes(1);
         }
     }
+
+    @Override
+    public Double calculatePercentageChange(String ticker, String interval) throws Exception {
+        JsonNode timeSeries = null;
+        String timeSeriesField = "";
+        int numEntries = 0;
+
+        logger.info("Calculating percentage change for ticker: {}, interval: {}", ticker, interval);
+
+        switch (interval.toLowerCase()) {
+            case "1min":
+                timeSeries = get1MinStockData(ticker);
+                timeSeriesField = "Time Series (1min)";
+                numEntries = 2;
+                break;
+            case "5min":
+                timeSeries = get1MinStockData(ticker);
+                timeSeriesField = "Time Series (5min)";
+                numEntries = 5;
+                break;
+            case "15min":
+                timeSeries = get5MinStockData(ticker);
+                timeSeriesField = "Time Series (5min)";
+                numEntries = 3;
+                break;
+            case "30min":
+                timeSeries = get5MinStockData(ticker);
+                timeSeriesField = "Time Series (5min)";
+                numEntries = 6;
+                break;
+            case "1hr":
+                timeSeries = getHourlyStockData(ticker);
+                timeSeriesField = "Time Series (60min)";
+                numEntries = 2;
+                break;
+            case "4hr":
+                timeSeries = getHourlyStockData(ticker);
+                timeSeriesField = "Time Series (60min)";
+                numEntries = 4;
+                break;
+            case "24hr":
+                timeSeries = getDailyStockData(ticker);
+                timeSeriesField = "Time Series (Daily)";
+                numEntries = 2;
+                break;
+            case "1week":
+                timeSeries = getWeeklyStockData(ticker);
+                timeSeriesField = "Weekly Time Series";
+                numEntries = 2;
+                break;
+            case "1month":
+                timeSeries = getMonthlyStockData(ticker);
+                timeSeriesField = "Monthly Time Series";
+                numEntries = 2;
+                break;
+            case "1year":
+                timeSeries = getMonthlyStockData(ticker);
+                timeSeriesField = "Monthly Time Series";
+                numEntries = 12;
+                break;
+            default:
+                logger.error("Invalid interval: {}", interval);
+                return null;
+        }
+
+        if (timeSeries == null || !timeSeries.fields().hasNext()) {
+            logger.error("Time series data is null or empty for ticker: {}, interval: {}", ticker, interval);
+            return null;
+        }
+        logger.info("Time series data: {}", timeSeries.toString());
+
+        Double percentageChange = calculatePercentageChange(timeSeries, timeSeriesField, numEntries);
+
+        if (percentageChange == null) {
+            logger.error("Percentage change calculation failed for ticker: {}, interval: {}", ticker, interval);
+        } else {
+            logger.info("Percentage change for ticker: {}, interval: {} is: {}", ticker, interval, percentageChange);
+        }
+
+        return percentageChange;
+    }
+
+    private Double calculatePercentageChange(JsonNode timeSeries, String timeSeriesField, int numEntries) {
+        logger.info("Starting percentage change calculation. Required entries: {}", numEntries);
+
+        if (timeSeries == null || !timeSeries.has(timeSeriesField)) {
+            logger.error("Time series data is null or empty. Cannot perform calculation.");
+            return null;
+        }
+
+        JsonNode timeSeriesData = timeSeries.get(timeSeriesField);
+        Iterator<Map.Entry<String, JsonNode>> iterator = timeSeriesData.fields();
+
+        List<Double> prices = new ArrayList<>();
+        int count = 0;
+
+        while (iterator.hasNext() && count < numEntries) {
+            Map.Entry<String, JsonNode> entry = iterator.next();
+            double closePrice = entry.getValue().get("4. close").asDouble();
+            prices.add(closePrice);
+            logger.info("Extracted close price: {} at timestamp: {}", closePrice, entry.getKey());
+            count++;
+        }
+
+        if (prices.size() < numEntries) {
+            logger.error("Not enough prices extracted to calculate percentage change. Needed: {}, Extracted: {}", numEntries, prices.size());
+            return null;
+        }
+
+        double mostRecentPrice = prices.get(0);
+        double olderPrice = prices.get(prices.size() - 1);
+
+        logger.info("Most recent price: {}, Older price: {}", mostRecentPrice, olderPrice);
+
+        double percentageChange = ((mostRecentPrice - olderPrice) / olderPrice) * 100.0;
+        logger.info("Calculated percentage change: {}%", percentageChange);
+
+        return percentageChange;
+    }
+
+
+
+
+
 }

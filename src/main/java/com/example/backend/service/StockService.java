@@ -22,4 +22,6 @@ public interface StockService {
     JsonNode getWeeklyStockData(String ticker) throws Exception;
     JsonNode getMonthlyStockData(String ticker) throws Exception;
     void saveSimulatedData(String ticker, LocalDateTime startTime, LocalDateTime endTime) throws Exception;
+
+    Double calculatePercentageChange(String ticker, String interval) throws Exception;
 }
