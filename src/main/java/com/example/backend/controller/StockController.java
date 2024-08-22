@@ -65,7 +65,11 @@ public class StockController {
                 Map.Entry<String, JsonNode> entry = it.next();
                 Map<String, String> stockData = new HashMap<>();
                 stockData.put("timestamp", entry.getKey());
+                stockData.put("open", entry.getValue().get("1. open").asText());
+                stockData.put("high", entry.getValue().get("2. high").asText());
+                stockData.put("low", entry.getValue().get("3. low").asText());
                 stockData.put("close", entry.getValue().get("4. close").asText());
+                stockData.put("volume", entry.getValue().get("5. volume").asText());
                 result.add(stockData);
             }
         }
