@@ -38,7 +38,6 @@ public class Transaction {
 
     @ManyToOne
     @JoinColumn(name = "stock_id")
-    @JsonIgnore
     private Stock stock;
 
     // Default constructor

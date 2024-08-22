@@ -57,7 +57,7 @@ public class Account {
     public Account(String nameCode, String accountType, float balance, Portfolio portfolio) {
         this.nameCode = nameCode;
         this.accountType = accountType;
-        this.totalCash = totalCash;
+        this.totalCash = balance;
         this.balance = balance;
         this.totalInvestments = 0;
         this.portfolio = portfolio;
