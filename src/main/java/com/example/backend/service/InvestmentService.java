@@ -7,5 +7,5 @@ import java.util.Optional;
 
 public interface InvestmentService {
     List<Investment> getAllInvestments();
-    Investment findInvestmentByTicker(String ticker);
+    Investment findInvestmentByTicker(String ticker, String nameCode);
 }

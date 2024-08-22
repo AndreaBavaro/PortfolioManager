@@ -12,6 +12,7 @@ import java.util.Optional;
 @Service
 public class InvestmentServiceImpl implements  InvestmentService{
 
+    @Autowired
     InvestmentRepository investmentRepository;
 
     @Override
@@ -20,13 +21,7 @@ public class InvestmentServiceImpl implements  InvestmentService{
     }
 
     @Override
-    public Investment findInvestmentByTicker(String ticker) {
-        // TODO: throw exception if not found
-        return investmentRepository.findInvestmentByTicker(ticker).orElseThrow();
-    }
-
-    @Autowired
-    public void setInvestmentRepository(InvestmentRepository investmentRepository){
-        this.investmentRepository = investmentRepository;
+    public Investment findInvestmentByTicker(String ticker, String nameCode) {
+        return investmentRepository.findInvestmentByTickerAndNameCode(ticker, nameCode).orElseThrow();
     }
 }

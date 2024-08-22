@@ -49,7 +49,7 @@ public class InvestmentController {
                                              @PathVariable("nameCode") String nameCode,
                                              @PathVariable("ticker") String ticker) {
         try {
-            Investment investment = investmentService.findInvestmentByTicker(ticker);
+            Investment investment = investmentService.findInvestmentByTicker(ticker, nameCode);
             if (investment.getAccount().getNameCode().equals(nameCode)) {
                 return ResponseEntity.ok(investment);
             } else {

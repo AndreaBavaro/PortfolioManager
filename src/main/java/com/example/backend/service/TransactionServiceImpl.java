@@ -1,5 +1,7 @@
 package com.example.backend.service;
 
+import com.example.backend.ResourceNotFoundException;
+import com.example.backend.dataaccess.AccountRepository;
 import com.example.backend.dataaccess.InvestmentRepository;
 import com.example.backend.dataaccess.TransactionRepository;
 import com.example.backend.model.Account;
@@ -10,7 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -23,25 +24,33 @@ public class TransactionServiceImpl implements  TransactionService {
     @Autowired
     InvestmentRepository investmentRepository;
 
-    private boolean isValidTransaction(Transaction transaction, boolean isBuy) {
+    @Autowired
+    AccountRepository accountRepository;
+
+    private void validateTransaction(Transaction transaction, boolean isBuy) {
         Account account = transaction.getAccount();
         Stock stock  = transaction.getStock();
         float transactionCost = transaction.getAmount() * stock.getPrice();
 
         // buying
         if (isBuy) {
-            float availableCash = account.getBalance();
-            return transactionCost <= availableCash; // check if enough cash in account
-        }
+            float availableCash = account.getTotalCash();
+            // check if enough cash in account
+            if (transactionCost > availableCash) {
+                throw new IllegalArgumentException("Insufficient Funds for Buying");
+            }
+        } else {
+            // selling
+            String ticker = stock.getTicker();
+            Optional<Investment> investment = investmentRepository.findInvestmentByTickerAndNameCode(ticker, account.getNameCode());
+            if (!investment.isPresent()) {
+                throw new ResourceNotFoundException("Cannot Find Investment with Ticker '" + ticker + "'"); // check if enough quantity in account
+            }
 
-        // selling
-        String ticker = stock.getTicker();
-        Optional<Investment> investment = investmentRepository.findInvestmentByTicker(ticker);
-        if (investment.isPresent()) {
-            return transaction.getAmount() <= investment.get().getQuantity(); // check if enough quantity in account
+            if (transaction.getAmount() > investment.get().getQuantity()) {
+                throw new IllegalArgumentException("Insufficient Quantity for Selling");
+            }
         }
-
-        return false;
     }
 
 
@@ -61,12 +70,10 @@ public class TransactionServiceImpl implements  TransactionService {
         transaction.setTransactionTime(currentTimestamp);
 
         // check if transaction is valid
-        if (!isValidTransaction(transaction, true)) {
-            throw new IllegalArgumentException("Invalid Transaction");
-        }
+        validateTransaction(transaction, true);
 
-        // search if investment exists
-        Optional<Investment> investment = investmentRepository.findInvestmentByTicker(stock.getTicker());
+        // find investment with the given ticker in account
+        Optional<Investment> investment = investmentRepository.findInvestmentByTickerAndNameCode(stock.getTicker(), account.getNameCode());
 
         // update investment if it exists, otherwise create new investment
         if (investment.isPresent()) {
@@ -93,6 +100,7 @@ public class TransactionServiceImpl implements  TransactionService {
         newInvestment.setAccount(transaction.getAccount());
         newInvestment.setStock(stock);
         newInvestment.addTransaction(transaction);
+        investmentRepository.save(newInvestment);
     }
 
     @Override
@@ -110,18 +118,18 @@ public class TransactionServiceImpl implements  TransactionService {
         transaction.setTransactionTime(currentTimestamp);
 
         // check if transaction is valid
-        if (!isValidTransaction(transaction, false)) {
-            throw new IllegalArgumentException("Invalid Transaction");
-        }
+        validateTransaction(transaction, false);
 
         // update investment, and delete investment in quantity is 0
-        Optional<Investment> investment = investmentRepository.findInvestmentByTicker(stock.getTicker());
-        int currentQuantity = investment.get().getQuantity();
+        Optional<Investment> investment = investmentRepository.findInvestmentByTickerAndNameCode(stock.getTicker(), account.getNameCode());
         investment.get().addTransaction(transaction);
-        if (currentQuantity > 0) {
-            investment.get().setQuantity(currentQuantity - transaction.getAmount());
+
+        int updatedQuantity = investment.get().getQuantity() - transaction.getAmount();
+        if (updatedQuantity > 0) {
+            investment.get().setQuantity(updatedQuantity);
         } else {
-            investmentRepository.deleteById(investment.get().getId());
+            long id = investment.get().getId();
+            investmentRepository.deleteById(id);
         }
 
         // update balance and investments in account

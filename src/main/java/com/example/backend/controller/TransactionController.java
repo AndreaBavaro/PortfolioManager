@@ -11,6 +11,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
+import java.util.Map;
+
 @RestController
 @RequestMapping("/portfolio")
 public class TransactionController {
@@ -25,7 +28,7 @@ public class TransactionController {
     StockService stockService;
 
     @PostMapping("/{id}/account/{nameCode}/transaction/{ticker}/buy")
-    public ResponseEntity<Transaction> buyTransaction(@PathVariable("id") Long id,
+    public ResponseEntity<?> buyTransaction(@PathVariable("id") Long id,
                                       @PathVariable("nameCode") String nameCode,
                                       @PathVariable("ticker") String ticker,
                                       @RequestBody Transaction transaction) {
@@ -36,13 +39,15 @@ public class TransactionController {
             transaction = transactionService.buyTransaction(type, transaction.getAmount(), account, stock);
             return ResponseEntity.ok(transaction);
         } catch (IllegalArgumentException | ResourceNotFoundException e) {
-            return ResponseEntity.badRequest().body(null);
+            Map<String, String> errorResponse = new HashMap<>();
+            errorResponse.put("error", e.getMessage());
+            return ResponseEntity.badRequest().body(errorResponse);
         }
 
     }
 
     @PostMapping("/{id}/account/{nameCode}/transaction/{ticker}/sell")
-    public ResponseEntity<Transaction> sellTransaction(@PathVariable("id") Long id,
+    public ResponseEntity<?> sellTransaction(@PathVariable("id") Long id,
                                        @PathVariable("nameCode") String nameCode,
                                        @PathVariable("ticker") String ticker,
                                        @RequestBody Transaction transaction) {
@@ -53,7 +58,9 @@ public class TransactionController {
             transaction = transactionService.sellTransaction(type, transaction.getAmount(), account, stock);
             return ResponseEntity.ok(transaction);
         } catch (IllegalArgumentException | ResourceNotFoundException e) {
-            return ResponseEntity.badRequest().body(null);
+            Map<String, String> errorResponse = new HashMap<>();
+            errorResponse.put("error", e.getMessage());
+            return ResponseEntity.badRequest().body(errorResponse);
         }
     }
 }
