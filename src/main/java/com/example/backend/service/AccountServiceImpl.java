@@ -31,17 +31,18 @@ public class AccountServiceImpl implements AccountService {
         // Fetch the source account
         Account fromAccount = accountRepository.findByNameCode(fromNameCode);
         if (fromAccount == null) {
-            throw new ResourceNotFoundException("Source Account not found");
+            throw new ResourceNotFoundException("Source Account not found: " + fromNameCode);
         }
 
         // Fetch the destination account
         Account toAccount = accountRepository.findByNameCode(toNameCode);
         if (toAccount == null) {
-            throw new ResourceNotFoundException("Destination Account not found");
+            throw new ResourceNotFoundException("Destination Account not found: " + toNameCode);
         }
 
-        if (fromAccount.getBalance() < amount) {
-            throw new IllegalArgumentException("Transfer amount cannot be more than current account balance");
+        // Ensure the source account has sufficient balance
+        if (fromAccount.getTotalCash() < amount) {
+            throw new IllegalArgumentException("Insufficient balance in the source account: " + fromNameCode);
         }
 
         // Perform the fund transfer
@@ -52,6 +53,7 @@ public class AccountServiceImpl implements AccountService {
         accountRepository.save(fromAccount);
         accountRepository.save(toAccount);
     }
+
     @Override
     public Account createAccount(String nameCode, String accountType, float balance, Portfolio portfolio) throws IllegalArgumentException {
         Account account = new Account(nameCode, accountType, balance, portfolio);

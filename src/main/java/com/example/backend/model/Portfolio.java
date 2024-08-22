@@ -55,11 +55,13 @@ public class Portfolio {
     }
 
     public void withdraw(float amount) {
-        this.balance -= amount;
+        this.totalCash -= amount;
+        this.balance = this.totalCash + this.totalInvestments;
     }
 
     public void deposit(float amount) {
-        this.balance += amount;
+        this.totalCash += amount;
+        this.balance = this.totalCash + this.totalInvestments;
     }
 
     public float getBalance() {
