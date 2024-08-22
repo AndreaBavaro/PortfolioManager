@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
+import java.util.*;
 
 @RestController
 @RequestMapping("/api")
@@ -57,13 +58,28 @@ public class StockController {
         }
     }
 
+    private List<Map<String, String>> parseTimeSeries(JsonNode timeSeries) {
+        List<Map<String, String>> result = new ArrayList<Map<String, String>>();
+        if (timeSeries != null) {
+            for (Iterator<Map.Entry<String, JsonNode>> it = timeSeries.fields(); it.hasNext(); ) {
+                Map.Entry<String, JsonNode> entry = it.next();
+                Map<String, String> stockData = new HashMap<>();
+                stockData.put("timestamp", entry.getKey());
+                stockData.put("close", entry.getValue().get("4. close").asText());
+                result.add(stockData);
+            }
+        }
+        return result;
+    }
 
     // Get 1-minute interval data
     @GetMapping("/stock/{ticker}/1min")
-    public ResponseEntity<JsonNode> get1MinStockData(@PathVariable String ticker) {
+    public ResponseEntity<List<Map<String, String>>> get1MinStockData(@PathVariable String ticker) {
         try {
             JsonNode data = stockService.get1MinStockData(ticker);
-            return new ResponseEntity<>(data, HttpStatus.OK);
+            JsonNode timeSeries = data.get("Time Series (1min)");
+            List<Map<String, String>> result = parseTimeSeries(timeSeries);
+            return new ResponseEntity<>(result, HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
@@ -71,10 +87,12 @@ public class StockController {
 
     // Get 5-minute interval data
     @GetMapping("/stock/{ticker}/5min")
-    public ResponseEntity<JsonNode> get5MinStockData(@PathVariable String ticker) {
+    public ResponseEntity<List<Map<String, String>>> get5MinStockData(@PathVariable String ticker) {
         try {
             JsonNode data = stockService.get5MinStockData(ticker);
-            return new ResponseEntity<>(data, HttpStatus.OK);
+            JsonNode timeSeries = data.get("Time Series (5min)");
+            List<Map<String, String>> result = parseTimeSeries(timeSeries);
+            return new ResponseEntity<>(result, HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
@@ -82,10 +100,12 @@ public class StockController {
 
     // Get hourly interval data
     @GetMapping("/stock/{ticker}/hourly")
-    public ResponseEntity<JsonNode> getHourlyStockData(@PathVariable String ticker) {
+    public ResponseEntity<List<Map<String, String>>> getHourlyStockData(@PathVariable String ticker) {
         try {
             JsonNode data = stockService.getHourlyStockData(ticker);
-            return new ResponseEntity<>(data, HttpStatus.OK);
+            JsonNode timeSeries = data.get("Time Series (60min)");
+            List<Map<String, String>> result = parseTimeSeries(timeSeries);
+            return new ResponseEntity<>(result, HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
@@ -93,10 +113,12 @@ public class StockController {
 
     // Get daily interval data
     @GetMapping("/stock/{ticker}/daily")
-    public ResponseEntity<JsonNode> getDailyStockData(@PathVariable String ticker) {
+    public ResponseEntity<List<Map<String, String>>> getDailyStockData(@PathVariable String ticker) {
         try {
             JsonNode data = stockService.getDailyStockData(ticker);
-            return new ResponseEntity<>(data, HttpStatus.OK);
+            JsonNode timeSeries = data.get("Time Series (Daily)");
+            List<Map<String, String>> result = parseTimeSeries(timeSeries);
+            return new ResponseEntity<>(result, HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
@@ -104,10 +126,12 @@ public class StockController {
 
     // Get weekly interval data
     @GetMapping("/stock/{ticker}/weekly")
-    public ResponseEntity<JsonNode> getWeeklyStockData(@PathVariable String ticker) {
+    public ResponseEntity<List<Map<String, String>>> getWeeklyStockData(@PathVariable String ticker) {
         try {
             JsonNode data = stockService.getWeeklyStockData(ticker);
-            return new ResponseEntity<>(data, HttpStatus.OK);
+            JsonNode timeSeries = data.get("Weekly Time Series");
+            List<Map<String, String>> result = parseTimeSeries(timeSeries);
+            return new ResponseEntity<>(result, HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
@@ -115,10 +139,12 @@ public class StockController {
 
     // Get monthly interval data
     @GetMapping("/stock/{ticker}/monthly")
-    public ResponseEntity<JsonNode> getMonthlyStockData(@PathVariable String ticker) {
+    public ResponseEntity<List<Map<String, String>>> getMonthlyStockData(@PathVariable String ticker) {
         try {
             JsonNode data = stockService.getMonthlyStockData(ticker);
-            return new ResponseEntity<>(data, HttpStatus.OK);
+            JsonNode timeSeries = data.get("Monthly Time Series");
+            List<Map<String, String>> result = parseTimeSeries(timeSeries);
+            return new ResponseEntity<>(result, HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }

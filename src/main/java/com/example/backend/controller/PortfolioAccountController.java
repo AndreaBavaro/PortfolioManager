@@ -134,20 +134,6 @@ public class PortfolioAccountController {
         }
     }
 
-    @GetMapping("/{id}/account/{nameCode}/investments")
-    public ResponseEntity<List<Investment>> viewInvestments(@PathVariable Long id, @PathVariable String nameCode) {
-        try {
-            Portfolio portfolio = portfolioService.viewPortfolio(id);
-            Account account = accountService.viewAccount(nameCode);
-            if (account.getPortfolio().getId() != id) {
-                return ResponseEntity.badRequest().build();
-            }
-            return ResponseEntity.ok(accountService.viewInvestments(nameCode));
-        } catch (ResourceNotFoundException e) {
-            return ResponseEntity.notFound().build();
-        }
-    }
-
     @GetMapping("/{id}/account/{nameCode}/transactions")
     public ResponseEntity<List<Transaction>> viewTransactions(@PathVariable Long id, @PathVariable String nameCode) {
         try {
