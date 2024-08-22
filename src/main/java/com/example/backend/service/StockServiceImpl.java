@@ -213,12 +213,12 @@ public class StockServiceImpl implements StockService {
                 break;
             case "15min":
                 timeSeries = get5MinStockData(ticker);
-                timeSeriesField = "Time Series (5min)";
+                timeSeriesField = "Time Series (15min)";
                 numEntries = 3;
                 break;
             case "30min":
                 timeSeries = get5MinStockData(ticker);
-                timeSeriesField = "Time Series (5min)";
+                timeSeriesField = "Time Series (30min)";
                 numEntries = 6;
                 break;
             case "1hr":
@@ -310,6 +310,7 @@ public class StockServiceImpl implements StockService {
 
         return percentageChange;
     }
+
 
 
 

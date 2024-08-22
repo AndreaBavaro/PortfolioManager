@@ -171,10 +171,10 @@ public class StockController {
             Double percentageChange = stockService.calculatePercentageChange(ticker, interval);
             if (percentageChange != null) {
                 return new ResponseEntity<>(percentageChange, HttpStatus.OK);
-            } else {
+            } else
                 return new ResponseEntity<>(HttpStatus.NOT_FOUND);
             }
-        } catch (Exception e) {
+         catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
